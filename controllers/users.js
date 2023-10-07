@@ -10,7 +10,7 @@ module.exports.getUserById = (req, res) => {
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((films) => res.send({ data: films }))
+    .then((users) => res.send({ data: users }))
     .catch((err) =>
       console.log(`Get users error '${err.name}' - '${err.message}'`)
     );
