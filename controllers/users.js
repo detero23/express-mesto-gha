@@ -1,31 +1,32 @@
-const User = require("../models/user");
-const ERR_IncorrectData = {
+const User = require('../models/user');
+
+const errorData = {
   code: 400,
-  name: "IncoorectDataError",
-  message: "Переданы некорректные данные",
+  name: 'IncoorectDataError',
+  message: 'Переданы некорректные данные',
 };
-const ERR_NotFound = {
+const errorNotFound = {
   code: 404,
-  name: "NotFoundError",
-  message: "Указанное _id не найдено",
+  name: 'NotFoundError',
+  message: 'Указанное _id не найдено',
 };
-const ERR_Unknown = {
+const errorUnknown = {
   code: 500,
-  name: "UnknownError",
-  message: "Неизвестная ошибка",
+  name: 'UnknownError',
+  message: 'Неизвестная ошибка',
 };
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch((err) => {
-      if (err.name == "ValidationError") {
-        res.status(ERR_IncorrectData.code).send({
-          message: `${ERR_IncorrectData.message} при получении списка пользователей`,
+      if (err.name === 'ValidationError') {
+        res.status(errorData.code).send({
+          message: `${errorData.message} при получении списка пользователей`,
         });
         return;
       }
-      res.status(ERR_Unknown.code).send({
+      res.status(errorUnknown.code).send({
         message: `Ошибка получения списка пользователей '${err.name}' - '${err.message}'`,
       });
     });
@@ -37,13 +38,13 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name == "ValidationError") {
-        res.status(ERR_IncorrectData.code).send({
-          message: `${ERR_IncorrectData.message} при создании пользователя`,
+      if (err.name === 'ValidationError') {
+        res.status(errorData.code).send({
+          message: `${errorData.message} при создании пользователя`,
         });
         return;
       }
-      res.status(ERR_Unknown.code).send({
+      res.status(errorUnknown.code).send({
         message: `Ошибка создания пользователя '${err.name}' - '${err.message}'`,
       });
     });
@@ -53,18 +54,25 @@ module.exports.getUserById = (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        throw ERR_NotFound;
+        throw errorNotFound;
       }
-      res.send({ data: user });
+      res.send({
+        data: {
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+          _id: user._id,
+        },
+      });
     })
     .catch((err) => {
-      if (err.name == "NotFoundError") {
-        res.status(ERR_NotFound.code).send({
-          message: `${ERR_NotFound.message} при получении пользователя`,
+      if (err.name === 'NotFoundError') {
+        res.status(errorNotFound.code).send({
+          message: `${errorNotFound.message} при получении пользователя`,
         });
         return;
       }
-      res.status(ERR_Unknown.code).send({
+      res.status(errorUnknown.code).send({
         message: `Ошибка создания пользователя '${err.name}' - '${err.message}'`,
       });
     });
@@ -75,33 +83,33 @@ module.exports.updateUser = (req, res) => {
 
   User.findByIdAndUpdate(
     req.user._id,
-    { name: name, about: about },
+    { name, about },
     {
       new: true,
       runValidators: true,
       upsert: false,
-    }
+    },
   )
     .then((user) => {
       if (!user) {
-        throw ERR_NotFound;
+        throw errorNotFound;
       }
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name == "NotFoundError") {
-        res.status(ERR_NotFound.code).send({
-          message: `${ERR_NotFound.message} при обновлении пользователя`,
+      if (err.name === 'NotFoundError') {
+        res.status(errorNotFound.code).send({
+          message: `${errorNotFound.message} при обновлении пользователя`,
         });
         return;
       }
-      if (err.name == "ValidationError") {
-        res.status(ERR_IncorrectData.code).send({
-          message: `${ERR_IncorrectData.message} при обновлении пользователя`,
+      if (err.name === 'ValidationError') {
+        res.status(errorData.code).send({
+          message: `${errorData.message} при обновлении пользователя`,
         });
         return;
       }
-      res.status(ERR_Unknown.code).send({
+      res.status(errorUnknown.code).send({
         message: `Ошибка обновления пользователя '${err.name}' - '${err.message}'`,
       });
     });
@@ -112,33 +120,33 @@ module.exports.updateAvatar = (req, res) => {
 
   User.findByIdAndUpdate(
     req.user._id,
-    { avatar: avatar },
+    { avatar },
     {
       new: true,
       runValidators: true,
       upsert: false,
-    }
+    },
   )
     .then((user) => {
       if (!user) {
-        throw ERR_NotFound;
+        throw errorNotFound;
       }
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name == "NotFoundError") {
-        res.status(ERR_NotFound.code).send({
-          message: `${ERR_NotFound.message} при обновлении аватара`,
+      if (err.name === 'NotFoundError') {
+        res.status(errorNotFound.code).send({
+          message: `${errorNotFound.message} при обновлении аватара`,
         });
         return;
       }
-      if (err.name == "ValidationError") {
-        res.status(ERR_IncorrectData.code).send({
-          message: `${ERR_IncorrectData.message} при обновлении аватара`,
+      if (err.name === 'ValidationError') {
+        res.status(errorData.code).send({
+          message: `${errorData.message} при обновлении аватара`,
         });
         return;
       }
-      res.status(ERR_Unknown.code).send({
+      res.status(errorUnknown.code).send({
         message: `Ошибка обновления аватара '${err.name}' - '${err.message}'`,
       });
     });

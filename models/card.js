@@ -1,11 +1,4 @@
-const mongoose = require("mongoose");
-
-const ownerSchema = new mongoose.Schema({
-  _id: mongoose.ObjectId,
-});
-const likesSchema = new mongoose.Schema({
-  _id: mongoose.ObjectId,
-});
+const mongoose = require('mongoose');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -34,4 +27,4 @@ const cardSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("card", cardSchema);
+module.exports = mongoose.model('card', cardSchema);
