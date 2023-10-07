@@ -26,3 +26,25 @@ module.exports.deleteCardById = (req, res) => {
       console.log(`Delete card by ID error '${err.name}' - '${err.message}'`)
     );
 };
+
+module.exports.putCardLike = (req, res) =>
+  Card.findByIdAndUpdate(
+    req.params.id,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
+    .then((card) => res.send({ data: card }))
+    .catch((err) =>
+      console.log(`Put card like error '${err.name}' - '${err.message}'`)
+    );
+
+module.exports.deleteCardLike = (req, res) =>
+  Card.findByIdAndUpdate(
+    req.params.id,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  )
+    .then((card) => res.send({ data: card }))
+    .catch((err) =>
+      console.log(`Delete card like error '${err.name}' - '${err.message}'`)
+    );

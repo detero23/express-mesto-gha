@@ -25,3 +25,43 @@ module.exports.createUser = (req, res) => {
       console.log(`Create user error '${err.name}' - '${err.message}'`);
     });
 };
+
+module.exports.updateUser = (req, res) => {
+  const { name, about } = req.body;
+
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name: name, about: about },
+    {
+      new: true,
+      runValidators: true,
+      upsert: false,
+    }
+  )
+    .then((user) => res.send({ data: user }))
+    .catch((err) =>
+      res
+        .status(500)
+        .send({ message: `Update user error '${err.name}' - '${err.message}'` })
+    );
+};
+
+module.exports.updateAvatar = (req, res) => {
+  const { avatar } = req.body;
+
+  User.findByIdAndUpdate(
+    req.user._id,
+    { avatar: avatar },
+    {
+      new: true,
+      runValidators: true,
+      upsert: false,
+    }
+  )
+    .then((user) => res.send({ data: user }))
+    .catch((err) =>
+      res.status(500).send({
+        message: `Update avatar error '${err.name}' - '${err.message}'`,
+      })
+    );
+};
