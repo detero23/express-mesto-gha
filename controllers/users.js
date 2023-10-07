@@ -66,7 +66,13 @@ module.exports.getUserById = (req, res) => {
       });
     })
     .catch((err) => {
-      if (err.name === 'NotFoundError' || err.name === 'CastError') {
+      if (err.name === 'CastError') {
+        res.status(errorData.code).send({
+          message: `${errorData.message} при получении пользователя`,
+        });
+        return;
+      }
+      if (err.name === 'NotFoundError') {
         res.status(errorNotFound.code).send({
           message: `${errorNotFound.message} при получении пользователя`,
         });
