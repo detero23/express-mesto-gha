@@ -60,7 +60,7 @@ module.exports.deleteCardById = (req, res) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'NotFoundError') {
+      if (err.name === 'NotFoundError' || err.name === 'CastError') {
         res.status(errorNotFound.code).send({
           message: `${errorNotFound.message} при удалении карточки`,
         });
@@ -84,7 +84,7 @@ module.exports.putCardLike = (req, res) => Card.findByIdAndUpdate(
     res.send({ data: card });
   })
   .catch((err) => {
-    if (err.name === 'NotFoundError') {
+    if (err.name === 'NotFoundError' || err.name === 'CastError') {
       res.status(errorNotFound.code).send({
         message: `${errorNotFound.message} при лайке карточки`,
       });
@@ -113,7 +113,7 @@ module.exports.deleteCardLike = (req, res) => Card.findByIdAndUpdate(
     res.send({ data: card });
   })
   .catch((err) => {
-    if (err.name === 'NotFoundError') {
+    if (err.name === 'NotFoundError' || err.name === 'CastError') {
       res.status(errorNotFound.code).send({
         message: `${errorNotFound.message} при удалении лайка карточки`,
       });

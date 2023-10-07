@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
@@ -17,6 +18,7 @@ mongoose
   .then(() => console.log('Connected'))
   .catch((err) => console.log(`Connection error '${err.name}' - '${err.message}'`));
 
+app.use(cors());
 app.use((req, res, next) => {
   req.user = {
     _id: '652094dc9694b5ea2a89fedd',
@@ -25,6 +27,12 @@ app.use((req, res, next) => {
 });
 app.use('/cards', require('./routes/cards'));
 app.use('/users', require('./routes/users'));
+
+app.get('*', (req, res) => {
+  res.status(404).send({
+    message: '404 Страница не найдена',
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

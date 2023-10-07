@@ -8,7 +8,7 @@ const errorData = {
 const errorNotFound = {
   code: 404,
   name: 'NotFoundError',
-  message: 'Указанное _id не найдено',
+  message: 'Указанное id не найдено',
 };
 const errorUnknown = {
   code: 500,
@@ -66,14 +66,14 @@ module.exports.getUserById = (req, res) => {
       });
     })
     .catch((err) => {
-      if (err.name === 'NotFoundError') {
+      if (err.name === 'NotFoundError' || err.name === 'CastError') {
         res.status(errorNotFound.code).send({
           message: `${errorNotFound.message} при получении пользователя`,
         });
         return;
       }
       res.status(errorUnknown.code).send({
-        message: `Ошибка создания пользователя '${err.name}' - '${err.message}'`,
+        message: `Ошибка получения пользователя по id '${err.name}' - '${err.message}'`,
       });
     });
 };
@@ -97,7 +97,7 @@ module.exports.updateUser = (req, res) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'NotFoundError') {
+      if (err.name === 'NotFoundError' || err.name === 'CastError') {
         res.status(errorNotFound.code).send({
           message: `${errorNotFound.message} при обновлении пользователя`,
         });
@@ -134,7 +134,7 @@ module.exports.updateAvatar = (req, res) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'NotFoundError') {
+      if (err.name === 'NotFoundError' || err.name === 'CastError') {
         res.status(errorNotFound.code).send({
           message: `${errorNotFound.message} при обновлении аватара`,
         });
