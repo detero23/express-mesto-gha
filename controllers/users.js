@@ -13,7 +13,7 @@ const errorNotFound = {
 const errorUnknown = {
   code: 500,
   name: 'UnknownError',
-  message: 'Неизвестная ошибка',
+  message: 'На сервере произошла ошибка',
 };
 
 module.exports.getUsers = (req, res) => {
@@ -27,7 +27,7 @@ module.exports.getUsers = (req, res) => {
         return;
       }
       res.status(errorUnknown.code).send({
-        message: `Ошибка получения списка пользователей '${err.name}' - '${err.message}'`,
+        message: errorUnknown.message,
       });
     });
 };
@@ -45,7 +45,7 @@ module.exports.createUser = (req, res) => {
         return;
       }
       res.status(errorUnknown.code).send({
-        message: `Ошибка создания пользователя '${err.name}' - '${err.message}'`,
+        message: errorUnknown.message,
       });
     });
 };
@@ -79,7 +79,7 @@ module.exports.getUserById = (req, res) => {
         return;
       }
       res.status(errorUnknown.code).send({
-        message: `Ошибка получения пользователя по id '${err.name}' - '${err.message}'`,
+        message: errorUnknown.message,
       });
     });
 };
@@ -116,7 +116,7 @@ module.exports.updateUser = (req, res) => {
         return;
       }
       res.status(errorUnknown.code).send({
-        message: `Ошибка обновления пользователя '${err.name}' - '${err.message}'`,
+        message: errorUnknown.message,
       });
     });
 };
@@ -153,7 +153,7 @@ module.exports.updateAvatar = (req, res) => {
         return;
       }
       res.status(errorUnknown.code).send({
-        message: `Ошибка обновления аватара '${err.name}' - '${err.message}'`,
+        message: errorUnknown.message,
       });
     });
 };

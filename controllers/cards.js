@@ -13,7 +13,7 @@ const errorNotFound = {
 const errorUnknown = {
   code: 500,
   name: 'UnknownError',
-  message: 'Неизвестная ошибка',
+  message: 'На сервере произошла ошибка',
 };
 
 module.exports.getCards = (req, res) => {
@@ -27,7 +27,7 @@ module.exports.getCards = (req, res) => {
         return;
       }
       res.status(errorUnknown.code).send({
-        message: `Ошибка получения списка карточек '${err.name}' - '${err.message}'`,
+        message: errorUnknown.message,
       });
     });
 };
@@ -46,7 +46,7 @@ module.exports.createCard = (req, res) => {
         return;
       }
       res.status(errorUnknown.code).send({
-        message: `Ошибка создания карточки '${err.name}' - '${err.message}'`,
+        message: errorUnknown.message,
       });
     });
 };
@@ -73,7 +73,7 @@ module.exports.deleteCardById = (req, res) => {
         return;
       }
       res.status(errorUnknown.code).send({
-        message: `Ошибка удаления карточки '${err.name}' - '${err.message}'`,
+        message: errorUnknown.message,
       });
     });
 };
@@ -103,7 +103,7 @@ module.exports.putCardLike = (req, res) => Card.findByIdAndUpdate(
       return;
     }
     res.status(errorUnknown.code).send({
-      message: `Ошибка лайка карточки '${err.name}' - '${err.message}'`,
+      message: errorUnknown.message,
     });
   });
 
@@ -132,6 +132,6 @@ module.exports.deleteCardLike = (req, res) => Card.findByIdAndUpdate(
       return;
     }
     res.status(errorUnknown.code).send({
-      message: `Ошибка удаления лайка карточки '${err.name}' - '${err.message}'`,
+      message: errorUnknown.message,
     });
   });
