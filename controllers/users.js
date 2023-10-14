@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 const errorData = {
@@ -33,19 +34,25 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
-  User.create({ name, about, avatar })
+  bcrypt.hash(password, 10).then((hash) => User.create({
+    name, about, avatar, email, password: hash,
+  }))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(errorData.code).send({
+          // message: `${err.name} - ${err.message}`
           message: `${errorData.message} при создании пользователя`,
         });
         return;
       }
       res.status(errorUnknown.code).send({
-        message: errorUnknown.message,
+        message: `${err.name} - ${err.message}`,
+        // message: errorUnknown.message,
       });
     });
 };
@@ -56,14 +63,7 @@ module.exports.getUserById = (req, res) => {
       if (!user) {
         throw errorNotFound;
       }
-      res.send({
-        data: {
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-          _id: user._id,
-        },
-      });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
