@@ -1,10 +1,11 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const errorData = {
   code: 400,
   name: 'IncoorectDataError',
-  message: 'Переданы некорректные данные',
+  message: 'Переданы некорректые данные',
 };
 const errorNotFound = {
   code: 404,
@@ -53,6 +54,62 @@ module.exports.createUser = (req, res) => {
       res.status(errorUnknown.code).send({
         message: `${err.name} - ${err.message}`,
         // message: errorUnknown.message,
+      });
+    });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  User.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Wrong email or password'));
+      }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            return Promise.reject(new Error('Wrong email or password'));
+          }
+
+          return user;
+        });
+    })
+    .then((user) => {
+      res.send({
+        token: jwt.sign({ _id: user._id }, 'My_Custom_Secret', {
+          expiresIn: '7d',
+        }),
+      });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+    });
+};
+
+module.exports.getMe = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        throw errorNotFound;
+      }
+      res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(errorData.code).send({
+          message: `${errorData.message} при получении себя`,
+        });
+        return;
+      }
+      if (err.name === 'NotFoundError') {
+        res.status(errorNotFound.code).send({
+          message: `${errorNotFound.message} при получении себя`,
+        });
+        return;
+      }
+      res.status(errorUnknown.code).send({
+        message: errorUnknown.message,
       });
     });
 };

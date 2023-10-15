@@ -10,6 +10,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const auth = require('./middlewares/auth');
+
 mongoose
   .connect('mongodb://127.0.0.1:27017/mestodb', {
     useNewUrlParser: true,
@@ -17,14 +19,10 @@ mongoose
   .then(() => console.log('Connected'))
   .catch((err) => console.log(`Connection error '${err.name}' - '${err.message}'`));
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '652094dc9694b5ea2a89fedd',
-  };
-  next();
-});
-app.use('/cards', require('./routes/cards'));
-app.use('/users', require('./routes/users'));
+app.post('/signin', require('./controllers/users').login);
+app.post('/signup', require('./controllers/users').createUser);
+app.use('/cards', auth, require('./routes/cards'));
+app.use('/users', auth, require('./routes/users'));
 
 app.use((req, res) => {
   res.status(404).send({

@@ -15,6 +15,11 @@ const errorUnknown = {
   name: 'UnknownError',
   message: 'На сервере произошла ошибка',
 };
+const errorCantDelete = {
+  code: 500,
+  name: 'CantDeleteError',
+  message: 'Cant delete',
+};
 
 module.exports.getCards = (req, res) => {
   Card.find({})
@@ -52,11 +57,18 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCardById = (req, res) => {
-  Card.findByIdAndRemove({ _id: req.params.id })
+  Card.findOne({ _id: req.params.id })
     .then((card) => {
       if (!card) {
         throw errorNotFound;
       }
+      // eslint-disable-next-line eqeqeq
+      if (req.user._id != card.owner._id) {
+        throw errorCantDelete;
+      }
+      return Card.findByIdAndRemove({ _id: card._id });
+    })
+    .then((card) => {
       res.send({ data: card });
     })
     .catch((err) => {
