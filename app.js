@@ -14,8 +14,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/NotFoundError');
-// eslint-disable-next-line no-useless-escape
-// const pattern = '/^(http|https):\/\/[^ "]+$/';
 
 mongoose
   .connect('mongodb://127.0.0.1:27017/mestodb', {
@@ -35,7 +33,6 @@ app.post('/signup', celebrate({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     avatar: Joi.string(),
-    // .pattern(new RegExp(pattern)),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),

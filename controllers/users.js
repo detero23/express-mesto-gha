@@ -30,9 +30,11 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.send({
-      data: { user },
-    }))
+    .then((user) => {
+      const nopass = user.toObject();
+      delete nopass.password;
+      res.send({ data: nopass });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new IncorrectDataError('Ошибка валидации при создании пользователя'));
