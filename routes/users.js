@@ -8,7 +8,7 @@ const {
   updateAvatar,
 } = require('../controllers/users');
 // eslint-disable-next-line no-useless-escape
-// const pattern = '/^(http|https):\/\/[^ "]+$/';
+const pattern = '/^(http|https):\/\/[^ "]+$/';
 
 router.get('/me', getMe);
 router.get('/:id', getUserById);
@@ -21,8 +21,7 @@ router.patch('/me', celebrate({
 }), updateUser);
 router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string(),
-    // .pattern(new RegExp(pattern)),
+    avatar: Joi.string().pattern(new RegExp(pattern)),
   }),
 }), updateAvatar);
 
