@@ -2,6 +2,7 @@ const Card = require('../models/card');
 
 const IncorrectDataError = require('../errors/IncorrectDataError');
 const NotFoundError = require('../errors/NotFoundError');
+const NoAccessError = require('../errors/NoAccessError');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -34,7 +35,7 @@ module.exports.deleteCardById = (req, res, next) => {
       }
       // eslint-disable-next-line eqeqeq
       if (req.user._id != card.owner._id) {
-        throw new Error('Cant delete card');
+        throw new NoAccessError('Cant delete other user card');
       }
       return Card.findByIdAndRemove({ _id: card._id });
     })

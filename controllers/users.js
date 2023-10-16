@@ -4,6 +4,7 @@ const User = require('../models/user');
 
 const IncorrectDataError = require('../errors/IncorrectDataError');
 const NotFoundError = require('../errors/NotFoundError');
+const AlreadyExistError = require('../errors/AlreadyExistError');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -29,10 +30,16 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send({
+      data: {
+        name: user.name, about: user.about, avatar: user.avatar, email: user.email, _id: user._id,
+      },
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new IncorrectDataError('Ошибка валидации при создании пользователя'));
+      } else if (err.code === 11000) {
+        next(new AlreadyExistError('Пользователь с таким email уже существует'));
       } else next(err);
     });
 };
@@ -44,11 +51,11 @@ module.exports.login = (req, res) => {
     .select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error('Wrong email or password'));
+        return Promise.reject(new IncorrectDataError('Wrong email or password'));
       }
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) {
-          return Promise.reject(new Error('Wrong email or password'));
+          return Promise.reject(new IncorrectDataError('Wrong email or password'));
         }
 
         return user;
