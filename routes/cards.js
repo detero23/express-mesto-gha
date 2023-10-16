@@ -9,13 +9,14 @@ const {
   deleteCardLike,
 } = require('../controllers/cards');
 // eslint-disable-next-line no-useless-escape
-const pattern = '/^(http|https):\/\/[^ "]+$/';
+// const pattern = '/^(http|https):\/\/[^ "]+$/';
 
 router.get('/', getCards);
 router.post('/', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().pattern(new RegExp(pattern)),
+    link: Joi.string().required(),
+    // .pattern(new RegExp(pattern)),
   }),
 }), createCard);
 router.delete('/:id', celebrate({
