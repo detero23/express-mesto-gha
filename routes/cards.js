@@ -9,7 +9,7 @@ const {
   deleteCardLike,
 } = require('../controllers/cards');
 // eslint-disable-next-line no-useless-escape
-const pattern = '/^(http|https):\/\/[^ "]+$/';
+const pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 
 router.get('/', getCards);
 router.post('/', celebrate({

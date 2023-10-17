@@ -8,7 +8,7 @@ const {
   updateAvatar,
 } = require('../controllers/users');
 // eslint-disable-next-line no-useless-escape
-const pattern = '/^(http|https):\/\/[^ "]+$/';
+const pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 
 router.get('/me', getMe);
 router.get('/:id', celebrate({

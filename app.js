@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/NotFoundError');
 // eslint-disable-next-line no-useless-escape
-const pattern = '/^(http|https):\/\/[^ "]+$/';
+const pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 
 mongoose
   .connect('mongodb://127.0.0.1:27017/mestodb', {
@@ -32,11 +32,11 @@ app.post('/signin', celebrate({
 }), require('./controllers/users').login);
 app.post('/signup', celebrate({
   body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().pattern(new RegExp(pattern)),
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
   }),
 }), require('./controllers/users').createUser);
 app.use('/cards', auth, require('./routes/cards'));
