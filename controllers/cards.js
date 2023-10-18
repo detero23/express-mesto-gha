@@ -19,7 +19,7 @@ module.exports.createCard = (req, res, next) => {
   const owner = { _id: req.user._id };
 
   Card.create({ name, link, owner })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new IncorrectDataError('Ошибка валидации при создании карточки'));
@@ -37,7 +37,7 @@ module.exports.deleteCardById = (req, res, next) => {
       if (req.user._id != card.owner._id) {
         throw new NoAccessError('Cant delete other user card');
       }
-      return Card.findByIdAndRemove({ _id: card._id });
+      return Card.deleteOne({ _id: card._id });
     })
     .then((card) => {
       res.send({ data: card });

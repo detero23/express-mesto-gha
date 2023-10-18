@@ -5,6 +5,7 @@ const User = require('../models/user');
 const IncorrectDataError = require('../errors/IncorrectDataError');
 const NotFoundError = require('../errors/NotFoundError');
 const AlreadyExistError = require('../errors/AlreadyExistError');
+const NoAuthError = require('../errors/NoAuthError');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -33,7 +34,7 @@ module.exports.createUser = (req, res, next) => {
     .then((user) => {
       const nopass = user.toObject();
       delete nopass.password;
-      res.send({ data: nopass });
+      res.status(201).send({ data: nopass });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -44,7 +45,7 @@ module.exports.createUser = (req, res, next) => {
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   User.findOne({ email })
@@ -69,7 +70,9 @@ module.exports.login = (req, res) => {
       });
     })
     .catch((err) => {
-      res.status(401).send({ message: err.message });
+      if (err.message === 'Wrong email or password') {
+        next(new NoAuthError('Некорректный email или пароль'));
+      } else next(err);
     });
 };
 
